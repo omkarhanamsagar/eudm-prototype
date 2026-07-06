@@ -133,7 +133,7 @@
   --ribbon-angle:     -11deg;
   --ribbon-thickness: 30%;
   /* Much quicker now — this is a full directional sweep, not a slow wobble */
-  --ribbon-speed:     27s;
+  --ribbon-speed:     20s;
   /* How close together the 3 ribbon GROUPS sit — smaller = tighter pack.
    * Drives the top/gap offsets each group is positioned at. */
   --ribbon-group-gap: 30%;
@@ -1230,7 +1230,7 @@ html, body {
           Left col (description): width=380px, marginLeft=48px, centered vertically
           Right col (asset): max-width=836px, height=360px, border-radius top corners only
         -->
-        <section class="primary-hero primary-hero--dark primary-hero--asset-image" id="hero" aria-label="End User Devices intro">
+        <section class="primary-hero primary-hero--dark primary-hero--asset-image-3" id="hero" aria-label="End User Devices intro">
 
           <!-- Aurora / ribbon background — 3 groups × 2–3 strands each -->
           <div class="primary-hero__bg-layer" aria-hidden="true">
@@ -1413,10 +1413,6 @@ html, body {
   </div><!-- /.main -->
 </div><!-- /.app -->
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     WAVE CONTROL PANEL — dev-only tool, not part of the shipped design.
-     Delete this <aside> + its <script> when porting to the real app.
-     ═══════════════════════════════════════════════════════════════════ -->
 <aside class="wave-panel" id="wave-panel">
   <div class="wave-panel__header">
     <span class="wave-panel__title">Design controls</span>
@@ -1425,12 +1421,163 @@ html, body {
 
   <div class="wave-panel__body">
 
-    <div class="wave-panel__segment-row">
-      <span class="wave-panel__segment-label">Hero screenshot</span>
-      <div class="wave-panel__segment-group" id="ctrl-screenshot-group">
-        <button class="wave-panel__segment-btn wave-panel__segment-btn--active" data-concept="2">Devices</button>
-        <button class="wave-panel__segment-btn" data-concept="3">Geomap</button>
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Card background</span>
       </div>
+      <div class="wave-panel__color-row">
+        <input type="color" id="ctrl-bg-color" value="#f8f6fc" />
+      </div>
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Ribbon color 1 (pink)</span>
+      </div>
+      <div class="wave-panel__color-row">
+        <input type="color" id="ctrl-color-1" value="#ff8fd6" />
+      </div>
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Ribbon color 2 (violet)</span>
+      </div>
+      <div class="wave-panel__color-row">
+        <input type="color" id="ctrl-color-2" value="#a06bff" />
+      </div>
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Ribbon color 3 (blue)</span>
+      </div>
+      <div class="wave-panel__color-row">
+        <input type="color" id="ctrl-color-3" value="#5ec8ff" />
+      </div>
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Highlight streak</span>
+      </div>
+      <div class="wave-panel__color-row">
+        <input type="color" id="ctrl-highlight" value="#ffc48a" />
+      </div>
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Opacity</span>
+        <span class="wave-panel__row-value" id="val-opacity">0.34</span>
+      </div>
+      <input type="range" id="ctrl-opacity" min="0.1" max="1" step="0.01" value="0.34" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Softness (blur)</span>
+        <span class="wave-panel__row-value" id="val-blur">6px</span>
+      </div>
+      <input type="range" id="ctrl-blur" min="4" max="140" step="1" value="6" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Angle</span>
+        <span class="wave-panel__row-value" id="val-angle">-11°</span>
+      </div>
+      <input type="range" id="ctrl-angle" min="-45" max="45" step="1" value="-11" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Thickness</span>
+        <span class="wave-panel__row-value" id="val-thickness">30%</span>
+      </div>
+      <input type="range" id="ctrl-thickness" min="6" max="70" step="1" value="30" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Group spacing</span>
+        <span class="wave-panel__row-value" id="val-group-gap">30%</span>
+      </div>
+      <input type="range" id="ctrl-group-gap" min="2" max="40" step="0.5" value="30" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Vertical position (Y)</span>
+        <span class="wave-panel__row-value" id="val-y-position">26%</span>
+      </div>
+      <input type="range" id="ctrl-y-position" min="-20" max="90" step="1" value="26" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Sweep speed</span>
+        <span class="wave-panel__row-value" id="val-speed">20s</span>
+      </div>
+      <input type="range" id="ctrl-speed" min="3" max="40" step="1" value="20" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Bottom fade</span>
+        <span class="wave-panel__row-value" id="val-fade">0.06</span>
+      </div>
+      <input type="range" id="ctrl-fade" min="0" max="0.7" step="0.01" value="0.06" />
+    </div>
+
+    <div class="wave-panel__section-title">Content spacing</div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Title → Heading</span>
+        <span class="wave-panel__row-value" id="val-content-gap-1">20px</span>
+      </div>
+      <input type="range" id="ctrl-content-gap-1" min="0" max="96" step="0.5" value="20" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Heading → Body</span>
+        <span class="wave-panel__row-value" id="val-content-gap-2">20px</span>
+      </div>
+      <input type="range" id="ctrl-content-gap-2" min="0" max="64" step="1" value="20" />
+    </div>
+
+    <div class="wave-panel__row">
+      <div class="wave-panel__row-label">
+        <span>Body → Buttons</span>
+        <span class="wave-panel__row-value" id="val-content-gap-3">48px</span>
+      </div>
+      <input type="range" id="ctrl-content-gap-3" min="0" max="96" step="1" value="48" />
+    </div>
+
+    <div class="wave-panel__switch-row">
+      <span class="wave-panel__switch-label">Dark background</span>
+      <label class="wave-panel__switch">
+        <input type="checkbox" id="ctrl-dark" checked />
+        <span class="wave-panel__switch-track"></span>
+      </label>
+    </div>
+
+    <div class="wave-panel__switch-row">
+      <span class="wave-panel__switch-label">Animate waves</span>
+      <label class="wave-panel__switch">
+        <input type="checkbox" id="ctrl-animate" checked />
+        <span class="wave-panel__switch-track"></span>
+      </label>
+    </div>
+
+    <div class="wave-panel__switch-row">
+      <span class="wave-panel__switch-label">Show content</span>
+      <label class="wave-panel__switch">
+        <input type="checkbox" id="ctrl-content" checked />
+        <span class="wave-panel__switch-track"></span>
+      </label>
     </div>
 
   </div>
@@ -1439,26 +1586,54 @@ html, body {
 <script>
 (function () {
   var hero = document.getElementById('hero');
+  var root = document.documentElement;
 
-  var screenshotClasses = ['primary-hero--asset-image', 'primary-hero--asset-image-2', 'primary-hero--asset-image-3'];
-  var screenshotBtns = Array.prototype.slice.call(document.querySelectorAll('#ctrl-screenshot-group .wave-panel__segment-btn'));
-
-  function setScreenshot(concept) {
-    screenshotClasses.forEach(function (cls, i) {
-      hero.classList.toggle(cls, i + 1 === concept);
-    });
-    screenshotBtns.forEach(function (btn) {
-      btn.classList.toggle('wave-panel__segment-btn--active', parseInt(btn.dataset.concept) === concept);
+  function bindRange(id, cssVar, valueId, formatter, unit) {
+    var input = document.getElementById(id);
+    var valueEl = document.getElementById(valueId);
+    input.addEventListener('input', function () {
+      root.style.setProperty(cssVar, input.value + (unit || ''));
+      if (valueEl) valueEl.textContent = formatter ? formatter(input.value) : input.value;
     });
   }
 
-  screenshotBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      setScreenshot(parseInt(btn.dataset.concept));
+  function bindColor(id, cssVar) {
+    var input = document.getElementById(id);
+    input.addEventListener('input', function () {
+      root.style.setProperty(cssVar, input.value);
     });
+  }
+
+  bindColor('ctrl-bg-color', '--hero-bg-color');
+  bindColor('ctrl-color-1', '--ribbon-color-1');
+  bindColor('ctrl-color-2', '--ribbon-color-2');
+  bindColor('ctrl-color-3', '--ribbon-color-3');
+  bindColor('ctrl-highlight', '--ribbon-highlight');
+
+  bindRange('ctrl-opacity', '--ribbon-opacity', 'val-opacity', null, '');
+  bindRange('ctrl-blur', '--ribbon-blur', 'val-blur', function (v) { return v + 'px'; }, 'px');
+  bindRange('ctrl-angle', '--ribbon-angle', 'val-angle', function (v) { return v + '°'; }, 'deg');
+  bindRange('ctrl-thickness', '--ribbon-thickness', 'val-thickness', function (v) { return v + '%'; }, '%');
+  bindRange('ctrl-group-gap', '--ribbon-group-gap', 'val-group-gap', function (v) { return v + '%'; }, '%');
+  bindRange('ctrl-y-position', '--ribbon-y-position', 'val-y-position', function (v) { return v + '%'; }, '%');
+  bindRange('ctrl-speed', '--ribbon-speed', 'val-speed', function (v) { return v + 's'; }, 's');
+  bindRange('ctrl-fade', '--fade-intensity', 'val-fade', null, '');
+
+  bindRange('ctrl-content-gap-1', '--content-gap-1', 'val-content-gap-1', function (v) { return v + 'px'; }, 'px');
+  bindRange('ctrl-content-gap-2', '--content-gap-2', 'val-content-gap-2', function (v) { return v + 'px'; }, 'px');
+  bindRange('ctrl-content-gap-3', '--content-gap-3', 'val-content-gap-3', function (v) { return v + 'px'; }, 'px');
+
+  document.getElementById('ctrl-dark').addEventListener('change', function (e) {
+    hero.classList.toggle('primary-hero--dark', e.target.checked);
   });
 
-  setScreenshot(2);
+  document.getElementById('ctrl-animate').addEventListener('change', function (e) {
+    hero.classList.toggle('primary-hero--waves-paused', !e.target.checked);
+  });
+
+  document.getElementById('ctrl-content').addEventListener('change', function (e) {
+    hero.classList.toggle('primary-hero--content-hidden', !e.target.checked);
+  });
 
   document.getElementById('wave-panel-collapse').addEventListener('click', function () {
     var panel = document.getElementById('wave-panel');
