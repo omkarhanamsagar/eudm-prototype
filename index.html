@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EUDM Intro Page — Prototype</title>
+<style>
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ * DRUIDS DESIGN TOKENS — exact values from packages/druids/ui/tokens/
+ * These map 1:1 to the Less variables and CSS custom properties in DRUIDS.
+ * When porting to React, replace these with the actual @druids imports.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Spacing (@spacing-*):
+ *   xxs=2  xs=4  sm=8  md=16  lg=24  xl=32  xxl=48
+ *
+ * Font sizes (@font-*):
+ *   xxs=8  xs=11  sm=12  md=13  lg=15  xl=18  xxl=23
+ *
+ * Font weights (@font-weight-*):
+ *   thin=300  normal=400  semibold=600  bold=700
+ *
+ * Heights (@height-*):
+ *   xxs=16  xs=20  sm=24  md=28  lg=36  xl=44  xxl=52
+ *
+ * Border radius (@border-radius*):
+ *   base=4  md=4  lg=8  xl=16
+ *
+ * Shadows:
+ *   shadow-6 = 0 0 1px rgba(36,41,49,0.1), 0 8px 36px var(--ui-shadow-strength)
+ *
+ * Font family (@font-family-base):
+ *   'NotoSans', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Font (DRUIDS @font-family-base) ──────────────────────────────── */
+  --font-base: 'NotoSans', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+
+  /* ── Light-mode CSS vars (from tokens/_css-variables.less) ────────── */
+  --ui-background:              #ffffff;
+  --ui-background-secondary:    #f9fafb;
+  --ui-background-tertiary:     #e2e5ed;
+  --ui-border:                  #e2e5ed;
+  --ui-text:                    rgba(28, 43, 52, 0.98);
+  --ui-text-secondary:          rgba(28, 43, 52, 0.68);
+  --ui-text-tertiary:           rgba(28, 43, 52, 0.50);
+  --ui-text-knockout:           #ffffff;
+  --ui-brand:                   #632ca6;
+  --ui-shadow-strength:         rgba(36, 41, 49, 0.15);
+
+  /* ── Button primary tokens ─────────────────────────────────────────── */
+  /* source: packages/druids/ui/tokens/_css-variables.less — light theme */
+  --ui-interaction-primary:          #006bc2;
+  --ui-interaction-primary-contrast: #0953bf;
+
+  /* ── ProductHeader exact values ───────────────────────────────────── */
+  /* source: packages/druids/ui/nav/ProductHeader/product-header.less   */
+  --ph-bg:                      #ffffff;  /* --ui-background            */
+  --ph-height:                  44px;     /* @height-xl                 */
+  --ph-font-size:               15px;     /* @font-lg                   */
+  --ph-text:                    #292e39;  /* @product-header-text-light */
+  --ph-text-secondary:          rgba(28, 43, 52, 0.68);
+  --ph-accent:                  #3a4661;  /* @product-header-accent-light — active tab underline */
+  --ph-tab-active-bg:           #f4f6fe;  /* @product-header-tab-active-bg-light */
+  --ph-gap:                     16px;     /* @spacing-md                */
+
+  /* ── Global Nav (left sidebar) ────────────────────────────────────── */
+  /* Matches actual Datadog sidebar bg (@navbar-bg reference in druids)  */
+  --nav-bg:                     #292e39;
+  --nav-width:                  160px;    /* @navbar-width — real single-page-app global nav (50px collapsed) */
+  --nav-item-font:              12px;     /* @font-sm                   */
+  --nav-text-active:            #ffffff;
+  --nav-text:                   rgba(255, 255, 255, 0.55);
+  --nav-accent:                 #632ca6;  /* --ui-brand                 */
+
+  /* ── PrimaryHero — pale/light theme ──────────────────────────────── */
+  /* Departs from the stock "midnight" dark theme — base is a very pale,
+   * airy tone, so the ribbon streaks read as the source of color rather
+   * than tinting an already-saturated background. Text is dark.
+   * --hero-bg-color is the one user-facing control (panel); the second
+   * gradient stop is derived from it automatically via color-mix(). */
+  --hero-bg-color:               #f8f6fc; /* pale lavender-white */
+  --hero-max-w:                 1320px;   /* @hero-width in primary-hero.less */
+
+  /* ── PrimaryHero — dark ("midnight") parallel ────────────────────── */
+  /* The original stock midnight gradient, kept as the alternate look —
+   * toggled on via the "Dark background" switch in the panel instead of
+   * being the only option. Ribbons switch to screen blend + brighten
+   * against this, which is what gives the luminous streak look. */
+  --hero-bg-dark-from:           #632ca6;
+  --hero-bg-dark-to:             #af0169;
+
+  /* ── PrimaryHero asset panel ─────────────────────────────────────── */
+  --hero-asset-max-w:           836px;    /* source: primary-hero.less __asset */
+  --hero-asset-height:          360px;    /* default assetHeight prop          */
+  --hero-desc-w:                380px;    /* source: primary-hero.less __description */
+
+  /* ── Layout sizing ────────────────────────────────────────────────── */
+  --spacing-xxs: 2px;
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md:  16px;
+  --spacing-lg:  24px;
+  --spacing-xl:  32px;
+  --spacing-xxl: 48px;
+
+  --border-radius:    4px;   /* @border-radius    */
+  --border-radius-lg: 8px;   /* @border-radius-lg */
+  --border-radius-xl: 16px;  /* @border-radius-xl */
+
+  /* ── Aurora / ribbon background controls — tune via the panel ────── */
+  /* There are 3 ribbon GROUPS (same 3 as before). Each group is now made
+   * of several thin "strand" sub-ribbons, all sharing that group's color
+   * story, so a single group reads as a bundle of moving threads instead
+   * of one flat band — this is what gives the "more ribbons visible,
+   * more movement, more texture" feel without losing the 3-group logic. */
+  /* Defaults below are tuned for the DARK ("midnight") version of the
+   * card, since dark is now the default look (panel's "Dark background"
+   * switch loads checked). */
+  --ribbon-color-1:   #ff8fd6; /* pink   */
+  --ribbon-color-2:   #a06bff; /* violet */
+  --ribbon-color-3:   #5ec8ff; /* blue   */
+  --ribbon-highlight: #ffc48a; /* thin warm highlight streak */
+  --ribbon-opacity:   0.34;
+  --ribbon-blur:      6px;
+  /* Bottom-left → top-right travel angle (ribbons run "uphill" left to right) */
+  --ribbon-angle:     -11deg;
+  --ribbon-thickness: 30%;
+  /* Much quicker now — this is a full directional sweep, not a slow wobble */
+  --ribbon-speed:     27s;
+  /* How close together the 3 ribbon GROUPS sit — smaller = tighter pack.
+   * Drives the top/gap offsets each group is positioned at. */
+  --ribbon-group-gap: 30%;
+  /* Vertical position of the whole ribbon bundle within the card —
+   * 0% = group 1 starts at the very top, 100% = bundle pinned to the
+   * bottom edge. This is where the first group's "top" anchor sits. */
+  --ribbon-y-position: 26%;
+  /* Kept low — the ribbons now live in this same bottom zone, so a heavy
+   * fade here would just mute the exact effect we're trying to show off. */
+  --fade-intensity:   0.06;
+
+  /* ── Content column vertical rhythm — tune via the panel ──────────
+   * Spacing between the 4 stacked elements in the hero's text column:
+   * [product title] → [h1] → [body] → [actions]. Each gap below maps
+   * directly to a margin-top, in px, on the element that follows it. */
+  --content-gap-1: 20px; /* product title → h1 */
+  --content-gap-2: 20px; /* h1 → body */
+  --content-gap-3: 48px; /* body → actions */
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-base);
+  background: var(--ui-background-secondary);
+  color: var(--ui-text);
+  line-height: 1.5;
+}
+
+/* ─── App shell layout ─────────────────────────────────────────────── */
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Left nav ─────────────────────────────────────────────────────── */
+/*
+ * Replicates the Datadog global nav proportions.
+ * Solid #292e39 bar — no items, just the scaffold block.
+ */
+.nav {
+  width: var(--nav-width);
+  flex-shrink: 0;
+  background: #292e39;
+  height: 100vh;
+  border-right: 1px solid rgba(0,0,0,0.2);
+}
+
+/* ─── Right column (topbar + content) ─────────────────────────────── */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Global top bar — solid scaffold block ─────────────────────────── */
+/* Real app: div.single-page-app_navbar_top-bar — 36px tall, bg #292E39 */
+.topbar {
+  height: 36px;
+  flex-shrink: 0;
+  background: #292e39;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+/* ─── ProductHeader (simplified — icon + title only) ──────────────── */
+.product-header {
+  height: var(--ph-height);  /* 44px = @height-xl */
+  flex-shrink: 0;
+  background: var(--ui-background);
+  border-bottom: 1px solid var(--ui-border);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ph-gap);
+  position: relative;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+/* Left side: icon + title */
+.product-header__left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+.product-header__icon {
+  display: flex;
+  align-items: center;
+}
+.product-header__title {
+  font-size: var(--ph-font-size); /* @font-lg = 15px */
+  font-weight: 600;
+  color: var(--ph-text);
+  letter-spacing: -0.1px;
+}
+
+/* ─── Page content scroll area ─────────────────────────────────────── */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--ui-background);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * INTRO PAGE — content starts here.
+ * Currently: just the PrimaryHero card outlined.
+ * Everything below the hero is intentionally empty.
+ * ───────────────────────────────────────────────────────────────────── */
+.intro {
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-xxl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/*
+ * PrimaryHero card
+ * Source: packages/apps/onboarding/components/ui/PrimaryHero/primary-hero.less
+ *
+ * - max-width: @hero-width = 1320px
+ * - border-radius: @border-radius = 4px
+ * - box-shadow: @shadow-6
+ * - background: linear-gradient(171.76deg, midnight-gradient-start, midnight-gradient-end)
+ * - overflow: hidden
+ * - __description width: 380px
+ * - __asset max-width: 836px
+ *
+ * Layout: Flex row, space-between, align-items: flex-end
+ */
+.primary-hero {
+  position: relative;
+  width: 1320px;   /* fixed — @hero-width */
+  height: 768px;   /* fixed */
+
+  /* Pale, airy base — the ribbons (concentrated toward the bottom half)
+   * carry all the saturated color; the card itself stays light so it
+   * reads as a soft, sunlit surface rather than a dark hero banner.
+   * --hero-bg-color is the single control exposed in the panel; the
+   * gradient's second stop is derived from it so tuning stays a one-knob
+   * job instead of needing two color pickers in sync. */
+  background: linear-gradient(
+    171.76deg,
+    var(--hero-bg-color) 4.71%,
+    color-mix(in srgb, var(--hero-bg-color) 70%, #fdf2ee) 93.67%
+  );
+
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 1px rgba(36, 41, 49, 0.1), 0 8px 36px rgba(36, 41, 49, 0.18);
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* ── Dark ("midnight") parallel — toggled via the panel switch ──────
+ * Same layout/ribbon system, just swaps the base gradient back to the
+ * original dark midnight theme and flips text/icons to knockout white.
+ * Ribbons switch to "screen" blend so they glow against the dark base
+ * instead of muddying into it (screen was the original aurora look). */
+.primary-hero--dark {
+  background: linear-gradient(
+    171.76deg,
+    var(--hero-bg-dark-from) 4.71%,
+    var(--hero-bg-dark-to) 93.67%
+  );
+}
+.primary-hero--dark .primary-hero__ribbon,
+.primary-hero--dark .primary-hero__ribbon--highlight {
+  mix-blend-mode: screen;
+}
+.primary-hero--dark .primary-hero__glow {
+  opacity: 0.35;
+}
+.primary-hero--dark .primary-hero__description,
+.primary-hero--dark .primary-hero__product-title,
+.primary-hero--dark .primary-hero__product-name,
+.primary-hero--dark .primary-hero__title {
+  color: var(--ui-text-knockout);
+}
+.primary-hero--dark .primary-hero__body {
+  color: rgba(255, 255, 255, 0.82);
+}
+.primary-hero--dark .primary-hero__asset {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 -8px 24px rgba(0, 0, 0, 0.15);
+}
+/* White button on dark — matches the NDM/CNM reference look (solid
+ * white pill, dark text) instead of the blue primary used on light. */
+.primary-hero--dark .primary-hero__btn {
+  background: #ffffff;
+  color: var(--ui-text);
+  border-color: transparent;
+}
+.primary-hero--dark .primary-hero__btn:hover {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: transparent;
+}
+
+/* ── Aurora / ribbon background ─────────────────────────────────────
+ * Reference: a pale, ethereal card where 2-3 elongated diagonal color
+ * streaks flow across the surface, each one shifting through several
+ * hues ALONG its own length (pink → violet → blue, with a thin warm
+ * highlight edge) rather than being one flat color. Heavily blurred
+ * so edges dissolve into the base — nothing here should look like a
+ * discrete "shape". Motion is a slow, barely-perceptible drift.
+ * Every knob is wired to a CSS var for the live control panel below.
+ * ────────────────────────────────────────────────────────────────── */
+.primary-hero__bg-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Soft pale glow sitting behind the ribbons — gives the base a lifted,
+ * airy quality instead of a flat two-stop gradient. */
+.primary-hero__glow {
+  position: absolute;
+  top: -30%;
+  left: -10%;
+  width: 75%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.35), transparent 70%);
+  filter: blur(80px);
+  opacity: 0.6;
+}
+
+/* ── Group base positions ─────────────────────────────────────────
+ * 3 ribbon GROUPS, each anchored at a top offset derived from
+ * --ribbon-group-gap so the panel slider can pull them tightly
+ * together or spread them apart without touching per-strand rules. */
+.primary-hero__bg-layer {
+  --g1-top: var(--ribbon-y-position);
+  --g2-top: calc(var(--g1-top) + var(--ribbon-group-gap));
+  --g3-top: calc(var(--g1-top) + var(--ribbon-group-gap) * 2);
+}
+
+.primary-hero__ribbon {
+  position: absolute;
+  left: -30%;
+  width: 160%;
+  filter: blur(var(--ribbon-blur));
+  mix-blend-mode: normal;
+  will-change: transform;
+  transform-origin: center;
+}
+
+/* ── Group 1 (pink → violet → blue) — 3 strands ─────────────────────
+ * Each strand shares the group's color story but has its own thickness,
+ * vertical offset, opacity, and animation timing (via negative delays)
+ * so the bundle reads as several independently ebbing/flowing threads
+ * rather than one flat band. */
+.primary-hero__ribbon--1a,
+.primary-hero__ribbon--1b,
+.primary-hero__ribbon--1c {
+  background: linear-gradient(
+    90deg,
+    transparent 4%,
+    var(--ribbon-color-1) 26%,
+    var(--ribbon-color-2) 50%,
+    var(--ribbon-color-3) 70%,
+    transparent 92%
+  );
+  transform: rotate(var(--ribbon-angle));
+  animation: ribbon-sweep-1 var(--ribbon-speed) ease-in-out infinite;
+}
+.primary-hero__ribbon--1a {
+  top: calc(var(--g1-top) - 5%);
+  height: calc(var(--ribbon-thickness) * 0.55);
+  opacity: calc(var(--ribbon-opacity) * 0.85);
+  animation-delay: 0s;
+}
+.primary-hero__ribbon--1b {
+  top: var(--g1-top);
+  height: calc(var(--ribbon-thickness) * 0.7);
+  opacity: var(--ribbon-opacity);
+  animation-delay: calc(var(--ribbon-speed) * -0.33);
+}
+.primary-hero__ribbon--1c {
+  top: calc(var(--g1-top) + 5.5%);
+  height: calc(var(--ribbon-thickness) * 0.4);
+  opacity: calc(var(--ribbon-opacity) * 0.7);
+  animation-delay: calc(var(--ribbon-speed) * -0.66);
+}
+
+/* ── Group 2 (violet → highlight → blue) — 3 strands ────────────── */
+.primary-hero__ribbon--2a,
+.primary-hero__ribbon--2b,
+.primary-hero__ribbon--2c {
+  background: linear-gradient(
+    90deg,
+    transparent 6%,
+    var(--ribbon-color-2) 24%,
+    var(--ribbon-highlight) 48%,
+    var(--ribbon-color-3) 68%,
+    transparent 90%
+  );
+  transform: rotate(calc(var(--ribbon-angle) * 1.35));
+  animation: ribbon-sweep-2 calc(var(--ribbon-speed) * 0.8) ease-in-out infinite;
+}
+.primary-hero__ribbon--2a {
+  top: calc(var(--g2-top) - 4.5%);
+  height: calc(var(--ribbon-thickness) * 0.44);
+  opacity: calc(var(--ribbon-opacity) * 0.75);
+  animation-delay: calc(var(--ribbon-speed) * -0.15);
+}
+.primary-hero__ribbon--2b {
+  top: var(--g2-top);
+  height: calc(var(--ribbon-thickness) * 0.56);
+  opacity: var(--ribbon-opacity);
+  animation-delay: calc(var(--ribbon-speed) * -0.5);
+}
+.primary-hero__ribbon--2c {
+  top: calc(var(--g2-top) + 5%);
+  height: calc(var(--ribbon-thickness) * 0.36);
+  opacity: calc(var(--ribbon-opacity) * 0.6);
+  animation-delay: calc(var(--ribbon-speed) * -0.85);
+}
+
+/* ── Group 3 (pink → violet) — 2 strands, thinner/quieter ────────── */
+.primary-hero__ribbon--3a,
+.primary-hero__ribbon--3b {
+  background: linear-gradient(
+    90deg,
+    transparent 8%,
+    var(--ribbon-color-1) 32%,
+    var(--ribbon-color-2) 58%,
+    transparent 88%
+  );
+  transform: rotate(calc(var(--ribbon-angle) * 0.7));
+  animation: ribbon-sweep-3 calc(var(--ribbon-speed) * 1.15) ease-in-out infinite;
+}
+.primary-hero__ribbon--3a {
+  top: calc(var(--g3-top) - 3%);
+  height: calc(var(--ribbon-thickness) * 0.42);
+  opacity: calc(var(--ribbon-opacity) * 0.65);
+  animation-delay: calc(var(--ribbon-speed) * -0.4);
+}
+.primary-hero__ribbon--3b {
+  top: calc(var(--g3-top) + 4%);
+  height: calc(var(--ribbon-thickness) * 0.3);
+  opacity: calc(var(--ribbon-opacity) * 0.5);
+  animation-delay: calc(var(--ribbon-speed) * -0.9);
+}
+
+/* Thin, crisp highlight streak — the bright "catching the light" edge
+ * visible along group 2's boundary. Barely blurred so it stays a
+ * distinct line rather than melting into the strands around it. */
+.primary-hero__ribbon--highlight {
+  position: absolute;
+  left: -30%;
+  width: 160%;
+  top: var(--g2-top);
+  height: 1.5%;
+  filter: blur(calc(var(--ribbon-blur) * 0.12));
+  opacity: calc(var(--ribbon-opacity) * 1.1);
+  background: linear-gradient(
+    90deg,
+    transparent 10%,
+    var(--ribbon-highlight) 45%,
+    transparent 85%
+  );
+  transform: rotate(calc(var(--ribbon-angle) * 1.35));
+  animation: ribbon-sweep-2 calc(var(--ribbon-speed) * 0.8) ease-in-out infinite;
+  will-change: transform;
+}
+
+/*
+ * Directional sweeps — real bottom-left → top-right travel (large
+ * translate distances along the ribbon's own diagonal), NOT a rotate
+ * wobble in place. Each ribbon uses different amplitudes/timing offsets
+ * and a bit of rotation jitter so the three don't move in lockstep —
+ * intentionally a little chaotic/organic rather than a tidy loop.
+ */
+@keyframes ribbon-sweep-1 {
+  0%   { transform: rotate(var(--ribbon-angle)) translate(-22%, 10%) scale(1); }
+  35%  { transform: rotate(calc(var(--ribbon-angle) - 4deg)) translate(6%, -6%) scale(1.05); }
+  70%  { transform: rotate(calc(var(--ribbon-angle) + 3deg)) translate(20%, -12%) scale(0.98); }
+  100% { transform: rotate(var(--ribbon-angle)) translate(-22%, 10%) scale(1); }
+}
+@keyframes ribbon-sweep-2 {
+  0%   { transform: rotate(calc(var(--ribbon-angle) * 1.35)) translate(-26%, 14%) scale(1); }
+  40%  { transform: rotate(calc(var(--ribbon-angle) * 1.35 + 5deg)) translate(2%, -4%) scale(0.96); }
+  75%  { transform: rotate(calc(var(--ribbon-angle) * 1.35 - 3deg)) translate(24%, -14%) scale(1.06); }
+  100% { transform: rotate(calc(var(--ribbon-angle) * 1.35)) translate(-26%, 14%) scale(1); }
+}
+@keyframes ribbon-sweep-3 {
+  0%   { transform: rotate(calc(var(--ribbon-angle) * 0.7)) translate(-18%, 8%) scale(1); }
+  45%  { transform: rotate(calc(var(--ribbon-angle) * 0.7 + 3deg)) translate(4%, -5%) scale(1.04); }
+  80%  { transform: rotate(calc(var(--ribbon-angle) * 0.7 - 4deg)) translate(18%, -10%) scale(0.97); }
+  100% { transform: rotate(calc(var(--ribbon-angle) * 0.7)) translate(-18%, 8%) scale(1); }
+}
+
+/* Pause all ribbon motion (toggled by the "Animate" checkbox in the panel) */
+.primary-hero--waves-paused .primary-hero__ribbon,
+.primary-hero--waves-paused .primary-hero__ribbon--highlight {
+  animation-play-state: paused !important;
+}
+
+/* Subtle bottom fade — the card gently darkens toward its lower edge */
+.primary-hero__bottom-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, var(--fade-intensity)) 100%
+  );
+  pointer-events: none;
+}
+
+/*
+ * Left text column — __description
+ * source: primary-hero.less
+ *   width: 380px
+ *   margin-left: @spacing-xxl = 48px (marginLeft="xxl" in Spacing)
+ *   align-self: center
+ *   color: --ui-text-knockout = #ffffff
+ */
+.primary-hero__description {
+  position: relative;
+  z-index: 1;
+  width: var(--hero-desc-w);       /* 380px */
+  align-self: center;
+  margin-left: var(--spacing-xxl); /* 48px */
+  margin-top: var(--spacing-xxl);  /* matches marginTop="xl" on wrapper = 32px, but xxl=48 for breathing room */
+  margin-bottom: var(--spacing-xxl);
+  color: var(--ui-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: opacity 0.2s ease;
+}
+
+/*
+ * PrimaryHero description column styles — dark text now that the base
+ * card is a pale/light tone instead of the stock dark "midnight" theme.
+ */
+
+/*
+ * Product title row — circular tinted icon badge + bold name, matching
+ * the pattern used across other Datadog intro pages (App Builder,
+ * Workflow Automation, Dynamic Instrumentation, etc.): a soft
+ * translucent-white circle holding a white glyph, paired with a larger
+ * bold label than a typical ProductTitle.
+ */
+.primary-hero__product-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md); /* 16px between badge and label */
+  color: var(--ui-text);
+}
+.primary-hero__product-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(28, 43, 52, 0.08); /* light-mode tint over the pale card */
+  color: var(--ui-text-secondary); /* icon glyph color (currentColor) */
+}
+.primary-hero--dark .primary-hero__product-icon-badge {
+  background: rgba(255, 255, 255, 0.18); /* translucent-white tint over the dark card */
+  color: #ffffff;
+}
+.primary-hero__product-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.primary-hero__product-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ui-text);
+  letter-spacing: -0.1px;
+}
+
+/*
+ * h1: 42px, dark, margin-top 43.5px (EditorialCopy block spacing)
+ * The 43.5px margin is what DRUIDS EditorialCopy applies above h1 inside the hero.
+ */
+.primary-hero__title {
+  font-size: 42px;         /* inspected: 42px */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: var(--ui-text);
+  margin-top: var(--content-gap-1); /* product title → h1, default 20px */
+  margin-bottom: 0;
+}
+
+/*
+ * p: 16px, dark secondary
+ */
+.primary-hero__body {
+  font-size: 16px;         /* inspected: 16px */
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ui-text-secondary);
+  margin-top: var(--content-gap-2); /* h1 → body, default 20px */
+  margin-bottom: 0;
+}
+
+/*
+ * Button — DRUIDS Button, size="lg", variant="default" isPrimary.
+ * source: packages/druids/ui/form/Button/button.less
+ *   height-lg = 36px, font-lg = 15px
+ *   padding: (height - font) / 1.5 → (36 - 15) / 1.5 ≈ 14px left/right
+ *   background: --ui-interaction-primary, hover: --ui-interaction-primary-contrast
+ *   text: --ui-text-knockout (white)
+ */
+.primary-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md); /* 16px gap between buttons */
+  margin-top: var(--content-gap-3); /* body → actions, default 48px */
+}
+.primary-hero__btn {
+  height: 36px;                 /* @height-lg */
+  padding: 0 14px;               /* (height-lg - font-lg) / 1.5 */
+  border-radius: var(--border-radius);
+  font-family: var(--font-base);
+  font-size: 15px;               /* @font-lg */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  text-decoration: none;
+  background: var(--ui-interaction-primary);
+  color: var(--ui-text-knockout);
+  line-height: 1;
+  transition: background-color 0.1s ease;
+}
+.primary-hero__btn:hover {
+  background: var(--ui-interaction-primary-contrast);
+  border-color: var(--ui-interaction-primary-contrast);
+}
+
+/*
+ * Secondary "Learn More" button — borderless/outlined pair to the
+ * primary CTA, matching the CNM reference: soft translucent fill,
+ * knockout text, external-link icon.
+ */
+.primary-hero__btn--secondary {
+  background: transparent;
+  color: var(--ui-text);
+  border-color: var(--ui-border);
+}
+.primary-hero__btn--secondary:hover {
+  background: var(--ui-background-secondary);
+  border-color: var(--ui-border);
+}
+.primary-hero--dark .primary-hero__btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ui-text-knockout);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.primary-hero--dark .primary-hero__btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/*
+ * Asset panel — __asset
+ * Source: primary-hero.less
+ *   max-width: 836px
+ *   border-radius: top-left corner only (flush right + bottom against the card edge)
+ *   Matches NDM reference: gap above the screenshot (revealing the gradient),
+ *   screenshot itself is solid white — no placeholder dashes/text.
+ */
+.primary-hero__asset {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-end;
+  width: 100%;
+  max-width: var(--hero-asset-max-w); /* 836px */
+  height: calc(768px - 72px); /* gap of 72px reveals the gradient above it */
+  border-radius: var(--border-radius-lg) 0 0 0;
+  background: #ffffff;
+  /* Now that the card base is light too, a hairline border keeps the
+   * asset panel from disappearing into the surrounding surface. */
+  box-shadow: 0 0 0 1px var(--ui-border), 0 -8px 24px rgba(36, 41, 49, 0.06);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+.primary-hero__asset-placeholder {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ui-text-tertiary);
+}
+
+/*
+ * Hero screenshot options — toggled via the "Hero screenshot" segmented control
+ * in the dev panel. Three variants: original, devices list, summary + geomap.
+ */
+.primary-hero--asset-image .primary-hero__asset,
+.primary-hero--asset-image-2 .primary-hero__asset,
+.primary-hero--asset-image-3 .primary-hero__asset {
+  background-size: cover;
+  background-position: top left;
+  background-repeat: no-repeat;
+}
+.primary-hero--asset-image .primary-hero__asset {
+  background-image: url('assets/hero-snapshot.png');
+}
+.primary-hero--asset-image-2 .primary-hero__asset {
+  background-image: url('assets/hero-snapshot-devices.png');
+}
+.primary-hero--asset-image-3 .primary-hero__asset {
+  background-image: url('assets/hero-snapshot-geomap.png');
+}
+.primary-hero--asset-image .primary-hero__asset-placeholder,
+.primary-hero--asset-image-2 .primary-hero__asset-placeholder,
+.primary-hero--asset-image-3 .primary-hero__asset-placeholder {
+  display: none;
+}
+
+/*
+ * "Learn More" scroll affordance — matches the CNM/Cloud Network intro
+ * reference: an uppercase indigo label with a down-chevron beneath it,
+ * inviting the user to scroll for more. Sits 32px (@spacing-xl) below
+ * the hero card. Color #5F59C8 = DRUIDS indigo, 12px (@font-sm).
+ */
+.intro__learn-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs); /* 4px between label and chevron */
+  margin-top: var(--spacing-xl); /* 32px below the hero card */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: #5f59c8;
+  transition: opacity 0.15s ease;
+}
+.intro__learn-more:hover {
+  opacity: 0.75;
+}
+.intro__learn-more-label {
+  font-family: var(--font-base);
+  font-size: var(--font-sm, 12px); /* @font-sm = 12px */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #5f59c8;
+}
+.intro__learn-more-chevron {
+  display: block;
+  color: #5f59c8;
+  animation: learn-more-bob 1.8s ease-in-out infinite;
+}
+@keyframes learn-more-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * SECONDARY HERO — feature-showcase accordion.
+ * 1:1 recreation of the DRUIDS/onboarding stack used on the CNM intro:
+ *   SecondaryHero  → packages/apps/onboarding/components/ui/SecondaryHero
+ *   ExpandableTile → packages/apps/onboarding/components/ui/ExpandableTile
+ *   AccordionSkeleton → packages/druids/ui/layout/Accordion
+ * Left: a column of expandable tiles (one open at a time). Right: an
+ * asset pane whose content swaps to match the active tile.
+ *
+ * Exact values pulled from source:
+ *   --sh-active-border  #5d4ebe  (--theme-midnight-primary-background, light)
+ *   --sh-active-bg      rgba(134,115,255,0.06) (--theme-midnight-secondary-background)
+ *   --sh-accent         #5f59c8  (--theme-midnight-text/-border)
+ *   tiles column width  360px    (secondary-hero.less __tiles)
+ *   content max-width   1000px, height 650px, radius 4px, shadow-4
+ *   tile border 2px / radius 8px / header padding 24px (@spacing-lg)
+ *   tile gap 24px (@spacing-lg); row margin-top 48px (@spacing-xxl)
+ *   chevron rotates 90deg on open, transition transform 0.125s ease
+ * ───────────────────────────────────────────────────────────────────── */
+.secondary-hero {
+  --sh-active-border: #5d4ebe;
+  --sh-active-bg:     rgba(134, 115, 255, 0.06);
+  --sh-accent:        #5f59c8;
+
+  width: 100%;
+  max-width: 1320px;
+  padding: 0 var(--spacing-md); /* 0 16px */
+  margin-top: var(--spacing-xxl); /* 48px below the learn-more affordance */
+}
+
+/* Centered title + description — TitleDescriptionLockup size="lg" */
+.secondary-hero__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-xl) 0; /* paddingTop/Bottom xl = 32px */
+}
+.secondary-hero__title {
+  font-size: 42px;   /* inspected on CNM: 42px NotoSans */
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ui-text); /* #1C2B34 @ 0.98 */
+  white-space: nowrap; /* keep on one line */
+}
+.secondary-hero__description {
+  font-size: 18px;   /* inspected on CNM: 18px NotoSans */
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ui-text-secondary); /* #1C2B34 @ 0.68 */
+  margin-top: var(--spacing-md); /* 16px */
+  max-width: 720px;
+}
+
+/* Main row: tiles (left) + content pane (right) */
+.secondary-hero__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--spacing-xl);         /* 32px — __tiles margin-right xl */
+  margin-top: var(--spacing-xxl); /* 48px — Flex marginTop xxl */
+}
+
+/* Left column of tiles */
+.secondary-hero__tiles {
+  width: 360px;   /* secondary-hero.less __tiles */
+  flex-shrink: 0;
+}
+
+/*
+ * ExpandableTile — expandable-tile.less
+ * Closed = borderless (transparent 2px border, no layout shift).
+ * Open   = 2px solid --sh-active-border.
+ */
+.sh-tile {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  transition-property: border-color, background-color;
+  transition-duration: 0.1s; /* @animation-duration-short */
+  transition-timing-function: ease-in;
+}
+.sh-tile:not(:last-child) {
+  margin-bottom: var(--spacing-lg); /* 24px */
+}
+.sh-tile--open {
+  border-color: var(--sh-active-border);
+}
+.sh-tile--open:hover {
+  background-color: var(--sh-active-bg);
+}
+
+/* Tile header (clickable) — padding @spacing-lg = 24px */
+.sh-tile__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-base);
+  transition: color 0.1s ease-in;
+  color: var(--ui-text);
+}
+.sh-tile__header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md); /* icon marginRight md = 16px */
+  min-width: 0;
+}
+.sh-tile__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px; /* expandable-tile.less __icon */
+  color: var(--ui-text-secondary);
+  transition: color 0.1s ease-in;
+}
+.sh-tile--open .sh-tile__icon {
+  color: var(--ui-text);
+}
+.sh-tile:not(.sh-tile--open):hover .sh-tile__icon,
+.sh-tile:not(.sh-tile--open):hover .sh-tile__title {
+  color: var(--sh-active-border);
+}
+.sh-tile__title {
+  font-size: 18px;   /* Text size="xl" */
+  font-weight: 700;
+  line-height: 1.35;
+  color: inherit;
+}
+/* Chevron — AngleRightIcon, rotates 90deg when open */
+.sh-tile__chevron {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--ui-text-tertiary);
+  transition: transform 0.125s ease;
+  transform: rotateZ(0deg);
+}
+.sh-tile--open .sh-tile__chevron {
+  transform: rotateZ(90deg);
+  color: var(--ui-text);
+}
+
+/* Expandable content — animated height via grid-rows (mirrors GrowingBlock) */
+.sh-tile__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+.sh-tile--open .sh-tile__content {
+  grid-template-rows: 1fr;
+}
+.sh-tile__content-inner {
+  overflow: hidden;
+}
+.sh-tile__content-body {
+  /* padding lg, paddingTop none (Spacing padding="lg" paddingTop="none") */
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm); /* gapY sm = 8px between paragraphs */
+  font-size: 13px;        /* Text size="md" */
+  line-height: 1.6;
+  color: var(--ui-text-secondary);
+}
+
+/* Right content pane — secondary-hero.less __content */
+.secondary-hero__content {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  max-width: 1000px;
+  height: 650px;           /* default contentHeight */
+  border-radius: var(--border-radius); /* 4px */
+  box-shadow: 0 0 1px rgba(36, 41, 49, 0.1), 0 3px 11px var(--ui-shadow-strength); /* @shadow-4 */
+  overflow: hidden;
+  background: var(--ui-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.secondary-hero__asset-placeholder {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ui-text-tertiary);
+}
+
+/* Content-hidden state — toggled by the "Show content" switch in the panel */
+.primary-hero--content-hidden #hero-content,
+.primary-hero--content-hidden #hero-asset {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * WAVE CONTROL PANEL — dev-only tool for tuning the aurora background.
+ * Not part of the page design; strip this whole block + its <aside>
+ * markup when porting the hero into the real app.
+ * ───────────────────────────────────────────────────────────────────── */
+.wave-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 268px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 0 1px rgba(36,41,49,0.1), 0 8px 24px rgba(36,41,49,0.18);
+  padding: var(--spacing-md);
+  font-size: 12px;
+  color: var(--ui-text);
+  z-index: 1000;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+.wave-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+.wave-panel__title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ui-text-secondary);
+}
+.wave-panel__collapse-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--ui-text-tertiary);
+  padding: 2px 6px;
+}
+.wave-panel__row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: var(--spacing-sm);
+}
+.wave-panel__row-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--ui-text-secondary);
+}
+.wave-panel__row-value {
+  font-family: var(--font-mono, monospace);
+  color: var(--ui-text-tertiary);
+  font-size: 11px;
+}
+.wave-panel input[type="range"] {
+  width: 100%;
+  accent-color: #632ca6;
+}
+.wave-panel input[type="color"] {
+  width: 32px;
+  height: 22px;
+  border: 1px solid var(--ui-border);
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+}
+.wave-panel__color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wave-panel__switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-top: 1px solid var(--ui-border);
+  margin-top: var(--spacing-xs);
+}
+.wave-panel__section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--ui-text-tertiary);
+  border-top: 1px solid var(--ui-border);
+  padding-top: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+.wave-panel__switch-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.wave-panel__switch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.wave-panel__switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.wave-panel__switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--ui-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.wave-panel__switch input:checked + .wave-panel__switch-track {
+  background: #632ca6;
+}
+.wave-panel__switch-track::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+.wave-panel__switch input:checked + .wave-panel__switch-track::before {
+  transform: translateX(14px);
+}
+.wave-panel--collapsed .wave-panel__body {
+  display: none;
+}
+
+/* ── Hero screenshot segmented control ──────────────────────────────── */
+.wave-panel__segment-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+.wave-panel__segment-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.wave-panel__segment-group {
+  display: flex;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.wave-panel__segment-btn {
+  flex: 1;
+  padding: 5px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--ui-border);
+  cursor: pointer;
+  color: var(--ui-text-secondary);
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+.wave-panel__segment-btn:last-child {
+  border-right: none;
+}
+.wave-panel__segment-btn--active {
+  background: #632ca6;
+  color: #ffffff;
+}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── Left nav — solid scaffold block ─────────────────── -->
+  <nav class="nav" aria-label="Global navigation"></nav>
+
+  <!-- ── Main column ──────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- Global top bar — solid scaffold block -->
+    <header class="topbar" aria-label="Global toolbar"></header>
+
+    <!-- ProductHeader — icon + title only, no tabs -->
+    <div class="product-header" role="navigation" aria-label="Product navigation">
+      <div class="product-header__left">
+        <div class="product-header__icon">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1.5" y="2.5" width="17" height="12" rx="2" stroke="#658be0" stroke-width="1.4"/>
+            <path d="M7 17.5h6M10 14.5v3" stroke="#8d9fc6" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="product-header__title">End User Devices</span>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <main class="content">
+      <div class="intro">
+
+        <!--
+          PrimaryHero
+          Source: packages/apps/onboarding/components/ui/PrimaryHero/PrimaryHero.tsx
+          Theme: midnight (purple → pink gradient, used by NDM/network products)
+          Layout: Flex row, space-between, align-items: flex-end
+          Left col (description): width=380px, marginLeft=48px, centered vertically
+          Right col (asset): max-width=836px, height=360px, border-radius top corners only
+        -->
+        <section class="primary-hero primary-hero--dark primary-hero--asset-image" id="hero" aria-label="End User Devices intro">
+
+          <!-- Aurora / ribbon background — 3 groups × 2–3 strands each -->
+          <div class="primary-hero__bg-layer" aria-hidden="true">
+            <div class="primary-hero__glow"></div>
+
+            <!-- Group 1: pink → violet → blue -->
+            <div class="primary-hero__ribbon primary-hero__ribbon--1a"></div>
+            <div class="primary-hero__ribbon primary-hero__ribbon--1b"></div>
+            <div class="primary-hero__ribbon primary-hero__ribbon--1c"></div>
+
+            <!-- Group 2: violet → highlight → blue -->
+            <div class="primary-hero__ribbon primary-hero__ribbon--2a"></div>
+            <div class="primary-hero__ribbon primary-hero__ribbon--2b"></div>
+            <div class="primary-hero__ribbon primary-hero__ribbon--2c"></div>
+
+            <!-- Group 3: pink → violet -->
+            <div class="primary-hero__ribbon primary-hero__ribbon--3a"></div>
+            <div class="primary-hero__ribbon primary-hero__ribbon--3b"></div>
+
+            <div class="primary-hero__ribbon--highlight"></div>
+          </div>
+          <div class="primary-hero__bottom-fade" aria-hidden="true"></div>
+
+          <!-- Left: description column -->
+          <div class="primary-hero__description" id="hero-content">
+
+            <!-- ProductTitle: circular icon badge + End User Devices -->
+            <div class="primary-hero__product-title">
+              <div class="primary-hero__product-icon-badge">
+                <svg class="primary-hero__product-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="1.5" y="2.5" width="17" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M7 17.5h6M10 14.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="primary-hero__product-name">End User Devices</span>
+            </div>
+
+            <!-- h1 title — EditorialCopy initialHeaderSize="3xl" -->
+            <h1 class="primary-hero__title">
+              Monitor your endpoints
+            </h1>
+
+            <!-- Description paragraph -->
+            <p class="primary-hero__body">
+              Real-time visibility into end user device health and performance across the system, network, and applications.
+            </p>
+
+            <!-- CTA buttons -->
+            <div class="primary-hero__actions">
+              <a class="primary-hero__btn" href="https://www.datadoghq.com/product-preview/end-user-device-monitoring/" target="_blank" rel="noopener noreferrer">
+                Request Access
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              <a class="primary-hero__btn primary-hero__btn--secondary" href="https://docs.datadoghq.com/infrastructure/end_user_device_monitoring/" target="_blank" rel="noopener noreferrer">
+                Learn More
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M8 5h-3.5a1.5 1.5 0 00-1.5 1.5v8a1.5 1.5 0 001.5 1.5h8a1.5 1.5 0 001.5-1.5V12M12 3h5v5M16.5 3.5l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            </div>
+
+          </div>
+
+          <!-- Right: asset panel — solid white, screenshot will go here -->
+          <div class="primary-hero__asset" id="hero-asset" aria-hidden="true">
+            <span class="primary-hero__asset-placeholder">Screenshot TBD</span>
+          </div>
+
+        </section>
+
+        <!-- "Learn More" scroll affordance — 32px below the hero card -->
+        <button class="intro__learn-more" type="button" aria-label="Learn more">
+          <span class="intro__learn-more-label">Learn More</span>
+          <svg class="intro__learn-more-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!--
+          SecondaryHero — feature-showcase accordion (below the fold).
+          Recreates: SecondaryHero + ExpandableTile + DRUIDS Accordion.
+          One tile open at a time; the right pane swaps to match.
+          Content is placeholder/dummy per the request.
+        -->
+        <section class="secondary-hero" id="secondary-hero" aria-label="Feature overview">
+
+          <div class="secondary-hero__header">
+            <h2 class="secondary-hero__title">Find the root cause of any device issue</h2>
+            <p class="secondary-hero__description">Learn how EUDM unifies hardware, network, and software in one view, so you can pinpoint where an issue starts and resolve it from the same place.</p>
+          </div>
+
+          <div class="secondary-hero__row">
+
+            <!-- Left: expandable tiles -->
+            <div class="secondary-hero__tiles" id="sh-tiles" role="list">
+
+              <!-- Tile 1 (open by default) -->
+              <div class="sh-tile sh-tile--open" role="listitem" data-tile="first">
+                <button class="sh-tile__header" type="button" aria-expanded="true">
+                  <span class="sh-tile__header-left">
+                    <svg class="sh-tile__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 10l2.5-2.5L10 9l3-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 17h6M10 13.5V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <span class="sh-tile__title">Real-time device metrics</span>
+                  </span>
+                  <svg class="sh-tile__chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="sh-tile__content">
+                  <div class="sh-tile__content-inner">
+                    <div class="sh-tile__content-body">
+                      <p>See CPU, memory, and disk usage updated every 15 seconds, along with historical trends, running processes, and full device metadata to catch regressions early.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tile 2 — AI insights (moved to #2 per review) -->
+              <div class="sh-tile" role="listitem" data-tile="ai">
+                <button class="sh-tile__header" type="button" aria-expanded="false">
+                  <span class="sh-tile__header-left">
+                    <svg class="sh-tile__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3l1.5 4.5L16 9l-4.5 1.5L10 15l-1.5-4.5L4 9l4.5-1.5L10 3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                    <span class="sh-tile__title">AI insights &amp; self-diagnostics</span>
+                  </span>
+                  <svg class="sh-tile__chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="sh-tile__content">
+                  <div class="sh-tile__content-inner">
+                    <div class="sh-tile__content-body">
+                      <p>Integrated with Bits Assistant to help you spot anomalies and get to the root cause faster. End users can run diagnostics and resolve common issues on their own.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tile 3 -->
+              <div class="sh-tile" role="listitem" data-tile="network">
+                <button class="sh-tile__header" type="button" aria-expanded="false">
+                  <span class="sh-tile__header-left">
+                    <svg class="sh-tile__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="4" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="15" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 9l8-3.5M6 11l8 3.5" stroke="currentColor" stroke-width="1.5"/></svg>
+                    <span class="sh-tile__title">Network correlation, device to app</span>
+                  </span>
+                  <svg class="sh-tile__chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="sh-tile__content">
+                  <div class="sh-tile__content-inner">
+                    <div class="sh-tile__content-body">
+                      <p>Trace latency hop by hop from L1 to L7, see which devices connect to which access points, and monitor Wi-Fi signal strength, packet drops, and errors.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tile 4 -->
+              <div class="sh-tile" role="listitem" data-tile="fleet">
+                <button class="sh-tile__header" type="button" aria-expanded="false">
+                  <span class="sh-tile__header-left">
+                    <svg class="sh-tile__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <span class="sh-tile__title">Fleet management &amp; remote actions</span>
+                  </span>
+                  <svg class="sh-tile__chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="sh-tile__content">
+                  <div class="sh-tile__content-inner">
+                    <div class="sh-tile__content-body">
+                      <p>Push configuration changes to the Datadog Agent remotely, manage your whole fleet across operating systems from one place, and target updates by OS, location, or custom tags.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right: asset pane — swaps to match the active tile -->
+            <div class="secondary-hero__content" id="sh-content" aria-live="polite">
+              <span class="secondary-hero__asset-placeholder" id="sh-asset-label">Screenshot TBD — Real-time device metrics</span>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div><!-- /.main -->
+</div><!-- /.app -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     WAVE CONTROL PANEL — dev-only tool, not part of the shipped design.
+     Delete this <aside> + its <script> when porting to the real app.
+     ═══════════════════════════════════════════════════════════════════ -->
+<aside class="wave-panel" id="wave-panel">
+  <div class="wave-panel__header">
+    <span class="wave-panel__title">Design controls</span>
+    <button class="wave-panel__collapse-btn" id="wave-panel-collapse">Hide</button>
+  </div>
+
+  <div class="wave-panel__body">
+
+    <div class="wave-panel__segment-row">
+      <span class="wave-panel__segment-label">Hero screenshot</span>
+      <div class="wave-panel__segment-group" id="ctrl-screenshot-group">
+        <button class="wave-panel__segment-btn wave-panel__segment-btn--active" data-concept="2">Devices</button>
+        <button class="wave-panel__segment-btn" data-concept="3">Geomap</button>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<script>
+(function () {
+  var hero = document.getElementById('hero');
+  var root = document.documentElement;
+
+  function bindRange(id, cssVar, valueId, formatter, unit) {
+    var input = document.getElementById(id);
+    var valueEl = document.getElementById(valueId);
+    input.addEventListener('input', function () {
+      root.style.setProperty(cssVar, input.value + (unit || ''));
+      if (valueEl) valueEl.textContent = formatter ? formatter(input.value) : input.value;
+    });
+  }
+
+  function bindColor(id, cssVar) {
+    var input = document.getElementById(id);
+    input.addEventListener('input', function () {
+      root.style.setProperty(cssVar, input.value);
+    });
+  }
+
+  bindColor('ctrl-bg-color', '--hero-bg-color');
+  bindColor('ctrl-color-1', '--ribbon-color-1');
+  bindColor('ctrl-color-2', '--ribbon-color-2');
+  bindColor('ctrl-color-3', '--ribbon-color-3');
+  bindColor('ctrl-highlight', '--ribbon-highlight');
+
+  bindRange('ctrl-opacity', '--ribbon-opacity', 'val-opacity', null, '');
+  bindRange('ctrl-blur', '--ribbon-blur', 'val-blur', function (v) { return v + 'px'; }, 'px');
+  bindRange('ctrl-angle', '--ribbon-angle', 'val-angle', function (v) { return v + '°'; }, 'deg');
+  bindRange('ctrl-thickness', '--ribbon-thickness', 'val-thickness', function (v) { return v + '%'; }, '%');
+  bindRange('ctrl-group-gap', '--ribbon-group-gap', 'val-group-gap', function (v) { return v + '%'; }, '%');
+  bindRange('ctrl-y-position', '--ribbon-y-position', 'val-y-position', function (v) { return v + '%'; }, '%');
+  bindRange('ctrl-speed', '--ribbon-speed', 'val-speed', function (v) { return v + 's'; }, 's');
+  bindRange('ctrl-fade', '--fade-intensity', 'val-fade', null, '');
+
+  bindRange('ctrl-content-gap-1', '--content-gap-1', 'val-content-gap-1', function (v) { return v + 'px'; }, 'px');
+  bindRange('ctrl-content-gap-2', '--content-gap-2', 'val-content-gap-2', function (v) { return v + 'px'; }, 'px');
+  bindRange('ctrl-content-gap-3', '--content-gap-3', 'val-content-gap-3', function (v) { return v + 'px'; }, 'px');
+
+  document.getElementById('ctrl-dark').addEventListener('change', function (e) {
+    hero.classList.toggle('primary-hero--dark', e.target.checked);
+  });
+
+  document.getElementById('ctrl-animate').addEventListener('change', function (e) {
+    hero.classList.toggle('primary-hero--waves-paused', !e.target.checked);
+  });
+
+  document.getElementById('ctrl-content').addEventListener('change', function (e) {
+    hero.classList.toggle('primary-hero--content-hidden', !e.target.checked);
+  });
+
+  var screenshotClasses = ['primary-hero--asset-image', 'primary-hero--asset-image-2', 'primary-hero--asset-image-3'];
+  var screenshotBtns = Array.prototype.slice.call(document.querySelectorAll('#ctrl-screenshot-group .wave-panel__segment-btn'));
+
+  function setScreenshot(concept) {
+    screenshotClasses.forEach(function (cls, i) {
+      hero.classList.toggle(cls, i + 1 === concept);
+    });
+    screenshotBtns.forEach(function (btn) {
+      btn.classList.toggle('wave-panel__segment-btn--active', parseInt(btn.dataset.concept) === concept);
+    });
+  }
+
+  screenshotBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setScreenshot(parseInt(btn.dataset.concept));
+    });
+  });
+
+  setScreenshot(2);
+
+  document.getElementById('wave-panel-collapse').addEventListener('click', function () {
+    var panel = document.getElementById('wave-panel');
+    var collapsed = panel.classList.toggle('wave-panel--collapsed');
+    this.textContent = collapsed ? 'Show' : 'Hide';
+  });
+
+  /* ── SecondaryHero tiles — single-select accordion + asset swap ────
+   * Mirrors SecondaryHero: exactly one tile open at a time. Clicking a
+   * tile makes it the active one and swaps the right pane's placeholder;
+   * clicking the already-open tile is a no-op (stays open). */
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.sh-tile'));
+  var assetLabel = document.getElementById('sh-asset-label');
+
+  function activateTile(tile) {
+    if (tile.classList.contains('sh-tile--open')) return;
+    tiles.forEach(function (t) {
+      var isTarget = t === tile;
+      t.classList.toggle('sh-tile--open', isTarget);
+      t.querySelector('.sh-tile__header').setAttribute('aria-expanded', String(isTarget));
+    });
+    var title = tile.querySelector('.sh-tile__title').textContent;
+    if (assetLabel) assetLabel.textContent = 'Screenshot TBD — ' + title;
+  }
+
+  tiles.forEach(function (tile) {
+    tile.querySelector('.sh-tile__header').addEventListener('click', function () {
+      activateTile(tile);
+    });
+  });
+
+  /* "Learn More" affordance smooth-scrolls to the feature section */
+  var learnMore = document.querySelector('.intro__learn-more');
+  if (learnMore) {
+    learnMore.addEventListener('click', function () {
+      var target = document.getElementById('secondary-hero');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
