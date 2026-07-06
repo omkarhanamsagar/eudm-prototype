@@ -1439,54 +1439,6 @@ html, body {
 <script>
 (function () {
   var hero = document.getElementById('hero');
-  var root = document.documentElement;
-
-  function bindRange(id, cssVar, valueId, formatter, unit) {
-    var input = document.getElementById(id);
-    var valueEl = document.getElementById(valueId);
-    input.addEventListener('input', function () {
-      root.style.setProperty(cssVar, input.value + (unit || ''));
-      if (valueEl) valueEl.textContent = formatter ? formatter(input.value) : input.value;
-    });
-  }
-
-  function bindColor(id, cssVar) {
-    var input = document.getElementById(id);
-    input.addEventListener('input', function () {
-      root.style.setProperty(cssVar, input.value);
-    });
-  }
-
-  bindColor('ctrl-bg-color', '--hero-bg-color');
-  bindColor('ctrl-color-1', '--ribbon-color-1');
-  bindColor('ctrl-color-2', '--ribbon-color-2');
-  bindColor('ctrl-color-3', '--ribbon-color-3');
-  bindColor('ctrl-highlight', '--ribbon-highlight');
-
-  bindRange('ctrl-opacity', '--ribbon-opacity', 'val-opacity', null, '');
-  bindRange('ctrl-blur', '--ribbon-blur', 'val-blur', function (v) { return v + 'px'; }, 'px');
-  bindRange('ctrl-angle', '--ribbon-angle', 'val-angle', function (v) { return v + '°'; }, 'deg');
-  bindRange('ctrl-thickness', '--ribbon-thickness', 'val-thickness', function (v) { return v + '%'; }, '%');
-  bindRange('ctrl-group-gap', '--ribbon-group-gap', 'val-group-gap', function (v) { return v + '%'; }, '%');
-  bindRange('ctrl-y-position', '--ribbon-y-position', 'val-y-position', function (v) { return v + '%'; }, '%');
-  bindRange('ctrl-speed', '--ribbon-speed', 'val-speed', function (v) { return v + 's'; }, 's');
-  bindRange('ctrl-fade', '--fade-intensity', 'val-fade', null, '');
-
-  bindRange('ctrl-content-gap-1', '--content-gap-1', 'val-content-gap-1', function (v) { return v + 'px'; }, 'px');
-  bindRange('ctrl-content-gap-2', '--content-gap-2', 'val-content-gap-2', function (v) { return v + 'px'; }, 'px');
-  bindRange('ctrl-content-gap-3', '--content-gap-3', 'val-content-gap-3', function (v) { return v + 'px'; }, 'px');
-
-  document.getElementById('ctrl-dark').addEventListener('change', function (e) {
-    hero.classList.toggle('primary-hero--dark', e.target.checked);
-  });
-
-  document.getElementById('ctrl-animate').addEventListener('change', function (e) {
-    hero.classList.toggle('primary-hero--waves-paused', !e.target.checked);
-  });
-
-  document.getElementById('ctrl-content').addEventListener('change', function (e) {
-    hero.classList.toggle('primary-hero--content-hidden', !e.target.checked);
-  });
 
   var screenshotClasses = ['primary-hero--asset-image', 'primary-hero--asset-image-2', 'primary-hero--asset-image-3'];
   var screenshotBtns = Array.prototype.slice.call(document.querySelectorAll('#ctrl-screenshot-group .wave-panel__segment-btn'));
