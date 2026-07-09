@@ -1002,6 +1002,189 @@ html, body {
   color: var(--ui-text-tertiary);
 }
 
+/* ── AI Demo — video ───────────────────────────────────────────────── */
+.sh-ai-demo { position: absolute; inset: 0; overflow: hidden; background: #13151a; }
+.sh-ai-video {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* ─── Network Overview demo — static scene ─── */
+.sh-net-demo {
+  position: absolute; inset: 0; overflow: hidden; background: #fff;
+}
+.sh-net-scene {
+  position: absolute; width: 1058px; height: 791px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.82);
+  transform-origin: center center;
+}
+.sh-net-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.sh-net-bg img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: fill;
+}
+.sh-net-spotlight {
+  position: absolute;
+  left: 200px; top: 204px;
+  width: 858px; height: 587px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+.sh-net-video {
+  position: absolute;
+  left: 200px; top: 204px;
+  width: 858px; height: 587px;
+  overflow: hidden;
+}
+.sh-net-video video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: fill;
+}
+
+/* ── Real-time device metrics demo ─────────────────────────────────────── */
+.sh-metrics-demo {
+  position: absolute; inset: 0; overflow: hidden; background: #fff;
+}
+.sh-metrics-scene {
+  position: absolute; width: 1058px; height: 791px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.82);
+  transform-origin: center center;
+  overflow: hidden;
+}
+/* Background */
+.sm-bg { position: absolute; inset: 0; }
+.sm-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+
+/* Scene-wide dim overlay (93:316 fill anim) — 0→20% at 395ms, holds */
+.sm-dim {
+  position: absolute; inset: 0; pointer-events: none;
+  animation: sm-dim 7.3s linear infinite;
+}
+@keyframes sm-dim {
+  0%     { animation-timing-function: cubic-bezier(0.42,0,1,1); background-color: rgba(0,0,0,0); }
+  5.420% { background-color: rgba(0,0,0,0.2); }
+  100%   { background-color: rgba(0,0,0,0.2); }
+}
+
+/* White backdrop behind device name card, with 20% dim overlay */
+.sm-alert-bg {
+  position: absolute;
+  left: 9px; top: 17px; width: 247px; height: 46px;
+  background: #fff;
+}
+.sm-alert-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Alert banner (93:537) — grows from 246×46 at (9,17) → 316×59 at (31,30) */
+.sm-alert {
+  position: absolute; overflow: hidden; border-radius: 8px;
+  animation: sm-alert-grow 7.3s linear infinite;
+}
+.sm-alert img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+@keyframes sm-alert-grow {
+  0%     { animation-timing-function: cubic-bezier(0.42,0,1,1);
+           left: 9px; top: 17px; width: 246.531px; height: 46px; }
+  5.420% { left: 31px; top: 30px; width: 316.203px; height: 59px; }
+  100%   { left: 31px; top: 30px; width: 316.203px; height: 59px; }
+}
+
+/* Health Summary card group (97:6) — 832×372 at (210,211), fades out at 4903ms */
+.sm-health-card {
+  position: absolute; left: 210px; top: 211px; width: 832px; height: 372px;
+  border-radius: 3px; overflow: hidden;
+  animation: sm-health-fade 7.3s linear infinite;
+}
+@keyframes sm-health-fade {
+  0%      { opacity: 1; }
+  67.169% { animation-timing-function: cubic-bezier(0.42,0,1,1); opacity: 1; }
+  71.362% { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Chart layers — stacked inside .sm-health-card */
+.sm-chart { position: absolute; inset: 0; }
+.sm-chart img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+
+/* Chart 1 (93:606, top) — fades out at 1504–1705ms */
+.sm-chart-1 { animation: sm-chart1-fade 7.3s linear infinite; }
+@keyframes sm-chart1-fade {
+  0%      { opacity: 1; }
+  20.611% { animation-timing-function: cubic-bezier(0.5,0,0.5,1); opacity: 1; }
+  23.364% { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Chart 2 (93:607, middle) — fades out at 3196–3396ms */
+.sm-chart-2 { animation: sm-chart2-fade 7.3s linear infinite; }
+@keyframes sm-chart2-fade {
+  0%      { opacity: 1; }
+  43.792% { animation-timing-function: cubic-bezier(0.5,0,0.5,1); opacity: 1; }
+  46.518% { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* Chart 3 (93:608, bottom) — always visible, no animation */
+
+/* New left nav (108:75) — 180×332 at (15,210), fades IN at 4903ms */
+.sm-nav2 {
+  position: absolute; left: 15px; top: 210px; width: 180px; height: 332px;
+  border-radius: 8px; overflow: hidden;
+  animation: sm-nav2-in 7.3s linear infinite;
+}
+.sm-nav2 img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.sm-nav2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+@keyframes sm-nav2-in {
+  0%      { opacity: 0; }
+  67.169% { animation-timing-function: cubic-bezier(0.42,0,1,1); opacity: 0; }
+  71.362% { opacity: 1; }
+  100%    { opacity: 1; }
+}
+
+/* Processes card (108:55) — 834×583, slides from top:601→210 at 4903ms */
+.sm-procs {
+  position: absolute; left: 208px; width: 834px; height: 583px;
+  border-radius: 3px; overflow: hidden;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+  animation: sm-procs-slide 7.3s linear infinite;
+}
+.sm-procs img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.sm-procs-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  animation: sm-procs-overlay 7.3s linear infinite;
+}
+@keyframes sm-procs-slide {
+  0%      { top: 601px; }
+  67.169% { animation-timing-function: cubic-bezier(0.42,0,1,1); top: 601px; }
+  71.362% { top: 210px; }
+  100%    { top: 210px; }
+}
+@keyframes sm-procs-overlay {
+  0%      { animation-timing-function: cubic-bezier(0.42,0,1,1); background-color: rgba(0,0,0,0); }
+  5.420%  { background-color: rgba(0,0,0,0.2); }
+  67.169% { animation-timing-function: cubic-bezier(0.42,0,1,1); background-color: rgba(0,0,0,0.2); }
+  71.362% { background-color: rgba(0,0,0,0); }
+  100%    { background-color: rgba(0,0,0,0); }
+}
+
 /* Content-hidden state — toggled by the "Show content" switch in the panel */
 .primary-hero--content-hidden #hero-content,
 .primary-hero--content-hidden #hero-asset {
@@ -1190,7 +1373,6 @@ html, body {
   color: #ffffff;
 }
 
-.wave-panel { display: none !important; }
 </style>
 </head>
 <body>
@@ -1327,7 +1509,7 @@ html, body {
             <div class="secondary-hero__tiles" id="sh-tiles" role="list">
 
               <!-- Tile 1 (open by default) -->
-              <div class="sh-tile sh-tile--open" role="listitem" data-tile="first">
+              <div class="sh-tile sh-tile--open" role="listitem" data-tile="metrics">
                 <button class="sh-tile__header" type="button" aria-expanded="true">
                   <span class="sh-tile__header-left">
                     <svg class="sh-tile__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 10l2.5-2.5L10 9l3-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 17h6M10 13.5V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1402,7 +1584,50 @@ html, body {
 
             <!-- Right: asset pane — swaps to match the active tile -->
             <div class="secondary-hero__content" id="sh-content" aria-live="polite">
-              <span class="secondary-hero__asset-placeholder" id="sh-asset-label">Screenshot TBD — Real-time device metrics</span>
+              <span class="secondary-hero__asset-placeholder" id="sh-asset-label" style="display:none">Screenshot TBD — Real-time device metrics</span>
+              <!-- Real-time device metrics demo — shown when metrics tile is active (default) -->
+              <div id="sh-metrics-demo" class="sh-metrics-demo" aria-hidden="true">
+                <div class="sh-metrics-scene">
+                  <!-- Layer 1: Full page background -->
+                  <div class="sm-bg"><img src="assets/metrics-bg.png" alt="" /></div>
+                  <!-- Layer 2: Scene-wide dim overlay -->
+                  <div class="sm-dim"></div>
+                  <!-- Layer 3: White backdrop (dimmed) + growing device name card -->
+                  <div class="sm-alert-bg"></div>
+                  <div class="sm-alert"><img src="assets/metrics-alert.png" alt="" /></div>
+                  <!-- Layer 4: Health Summary card — 3 chart screenshots cycling -->
+                  <div class="sm-health-card">
+                    <div class="sm-chart sm-chart-3"><img src="assets/metrics-chart-3.png" alt="" /></div>
+                    <div class="sm-chart sm-chart-2"><img src="assets/metrics-chart-2.png" alt="" /></div>
+                    <div class="sm-chart sm-chart-1"><img src="assets/metrics-chart-1.png" alt="" /></div>
+                  </div>
+                  <!-- Layer 5: New nav (fades in showing Processes selected) -->
+                  <div class="sm-nav2"><img src="assets/metrics-nav2.png" alt="" /></div>
+                  <!-- Layer 6: Processes card (slides up from bottom) -->
+                  <div class="sm-procs">
+                    <img src="assets/metrics-procs.png" alt="" />
+                    <div class="sm-procs-overlay"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- AI insights animation — shown only when AI tile is active -->
+              <div id="sh-ai-demo" class="sh-ai-demo" aria-hidden="true" style="display:none">
+                <video class="sh-ai-video" autoplay loop muted playsinline>
+                  <source src="assets/bits.mov" type="video/mp4" />
+                </video>
+              </div>
+              <!-- Network Overview demo — shown when network tile is active -->
+              <div id="sh-net-demo" class="sh-net-demo" aria-hidden="true" style="display:none">
+                <div class="sh-net-scene">
+                  <div class="sh-net-bg"><img src="assets/net-bg.png" alt="" /></div>
+                  <div class="sh-net-video">
+                    <video autoplay loop muted playsinline>
+                      <source src="assets/net-video.mp4.mov" type="video/mp4" />
+                    </video>
+                  </div>
+                  <div class="sh-net-spotlight"></div>
+                </div>
+              </div>
             </div>
 
           </div>
@@ -1649,6 +1874,10 @@ html, body {
   var tiles = Array.prototype.slice.call(document.querySelectorAll('.sh-tile'));
   var assetLabel = document.getElementById('sh-asset-label');
 
+  var metricsDemo = document.getElementById('sh-metrics-demo');
+  var aiDemo      = document.getElementById('sh-ai-demo');
+  var netDemo     = document.getElementById('sh-net-demo');
+
   function activateTile(tile) {
     if (tile.classList.contains('sh-tile--open')) return;
     tiles.forEach(function (t) {
@@ -1656,8 +1885,18 @@ html, body {
       t.classList.toggle('sh-tile--open', isTarget);
       t.querySelector('.sh-tile__header').setAttribute('aria-expanded', String(isTarget));
     });
-    var title = tile.querySelector('.sh-tile__title').textContent;
-    if (assetLabel) assetLabel.textContent = 'Screenshot TBD — ' + title;
+    var tileType    = tile.dataset.tile;
+    var isMetrics   = tileType === 'metrics';
+    var isAi        = tileType === 'ai';
+    var isNet       = tileType === 'network';
+    var hasDemo     = isMetrics || isAi || isNet;
+    if (metricsDemo) metricsDemo.style.display = isMetrics ? 'block' : 'none';
+    if (aiDemo)      aiDemo.style.display      = isAi      ? 'block' : 'none';
+    if (netDemo)     netDemo.style.display     = isNet     ? 'block' : 'none';
+    if (assetLabel) {
+      assetLabel.style.display = hasDemo ? 'none' : '';
+      if (!hasDemo) assetLabel.textContent = 'Screenshot TBD — ' + tile.querySelector('.sh-tile__title').textContent;
+    }
   }
 
   tiles.forEach(function (tile) {
