@@ -1246,6 +1246,14 @@ html, body {
   16.25%, 100%{ translate: 0px -51px; }
 }
 
+/* ── Fleet Automation demo — static screenshot ─────────────────────── */
+.sh-fleet-demo {
+  position: absolute; inset: 0; overflow: hidden; background: #fff;
+}
+.sh-fleet-demo img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left;
+}
+
 /* ─── Network Overview demo — static scene ─── */
 .sh-net-demo {
   position: absolute; inset: 0; overflow: hidden; background: #fff;
@@ -1863,6 +1871,10 @@ html, body {
                   <div class="sh-net-spotlight"></div>
                 </div>
               </div>
+              <!-- Fleet Automation demo — shown when fleet tile is active -->
+              <div id="sh-fleet-demo" class="sh-fleet-demo" aria-hidden="true" style="display:none">
+                <img src="assets/fleet-install-agents.png" alt="Fleet Automation — Install Agents" />
+              </div>
             </div>
 
           </div>
@@ -2112,6 +2124,7 @@ html, body {
   var metricsDemo = document.getElementById('sh-metrics-demo');
   var aiDemo      = document.getElementById('sh-ai-demo');
   var netDemo     = document.getElementById('sh-net-demo');
+  var fleetDemo   = document.getElementById('sh-fleet-demo');
 
   function activateTile(tile) {
     if (tile.classList.contains('sh-tile--open')) return;
@@ -2124,10 +2137,12 @@ html, body {
     var isMetrics   = tileType === 'metrics';
     var isAi        = tileType === 'ai';
     var isNet       = tileType === 'network';
-    var hasDemo     = isMetrics || isAi || isNet;
+    var isFleet     = tileType === 'fleet';
+    var hasDemo     = isMetrics || isAi || isNet || isFleet;
     if (metricsDemo) metricsDemo.style.display = isMetrics ? 'block' : 'none';
     if (aiDemo)      aiDemo.style.display      = isAi      ? 'block' : 'none';
     if (netDemo)     netDemo.style.display     = isNet     ? 'block' : 'none';
+    if (fleetDemo)   fleetDemo.style.display   = isFleet   ? 'block' : 'none';
     if (assetLabel) {
       assetLabel.style.display = hasDemo ? 'none' : '';
       if (!hasDemo) assetLabel.textContent = 'Screenshot TBD — ' + tile.querySelector('.sh-tile__title').textContent;
