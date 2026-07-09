@@ -831,7 +831,7 @@ html, body {
   --sh-accent:        #5f59c8;
 
   width: 100%;
-  max-width: 1320px;
+  max-width: 1460px;
   padding: 0 var(--spacing-md); /* 0 16px */
   margin-top: var(--spacing-xxl); /* 48px below the learn-more affordance */
 }
@@ -986,7 +986,7 @@ html, body {
   position: relative;
   flex: 1;
   min-width: 0;
-  max-width: 1000px;
+  max-width: 1100px;
   height: 650px;           /* default contentHeight */
   border-radius: var(--border-radius); /* 4px */
   box-shadow: 0 0 1px rgba(36, 41, 49, 0.1), 0 3px 11px var(--ui-shadow-strength); /* @shadow-4 */
@@ -1260,9 +1260,10 @@ html, body {
 }
 .sh-net-scene {
   position: absolute; width: 2633px; height: 1666px;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.34);
-  transform-origin: center center;
+  /* scale by height to fill 650px container; start flush at container left */
+  top: 0; left: 0;
+  transform: scale(0.390);
+  transform-origin: top left;
   overflow: hidden;
 }
 /* 176:255 — full-page background screenshot */
@@ -1274,6 +1275,16 @@ html, body {
   position: absolute;
   height: 104.56%; left: -42.8%; top: -4.56%; width: 142.8%;
   max-width: none;
+}
+/* spotlight — darkens everything outside the card */
+.sh-net-spotlight {
+  position: absolute;
+  left: 440px; top: 427px;
+  width: 2162px; height: 1239px; /* card screenshot to scene bottom (1666-427) */
+  border-radius: 8px;
+  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 10;
 }
 /* 176:256 — chart slot (screen recording exported as PNG from Figma) */
 .sh-net-video {
@@ -1883,6 +1894,7 @@ html, body {
                   <div class="sh-net-video">
                     <img src="assets/net2-chart-export.png" alt="" />
                   </div>
+                  <div class="sh-net-spotlight"></div>
                 </div>
               </div>
               <!-- Fleet Automation demo — shown when fleet tile is active -->
@@ -2140,8 +2152,26 @@ html, body {
   var netDemo     = document.getElementById('sh-net-demo');
   var fleetDemo   = document.getElementById('sh-fleet-demo');
 
+  function resetAnimation(tileType) {
+    if (tileType === 'ai') {
+      var video = aiDemo && aiDemo.querySelector('video');
+      if (video) { video.currentTime = 0; video.play(); }
+    } else if (tileType === 'metrics') {
+      /* Restart CSS keyframe animations by cancelling then replaying */
+      var scene = metricsDemo && metricsDemo.querySelector('.sh-metrics-scene');
+      if (scene && scene.getAnimations) {
+        scene.getAnimations({ subtree: true }).forEach(function (a) { a.cancel(); a.play(); });
+      }
+    }
+  }
+
   function activateTile(tile) {
-    if (tile.classList.contains('sh-tile--open')) return;
+    var alreadyOpen = tile.classList.contains('sh-tile--open');
+    if (alreadyOpen) {
+      /* Re-click: reset animation without changing active tile */
+      resetAnimation(tile.dataset.tile);
+      return;
+    }
     tiles.forEach(function (t) {
       var isTarget = t === tile;
       t.classList.toggle('sh-tile--open', isTarget);
@@ -2161,6 +2191,8 @@ html, body {
       assetLabel.style.display = hasDemo ? 'none' : '';
       if (!hasDemo) assetLabel.textContent = 'Screenshot TBD — ' + tile.querySelector('.sh-tile__title').textContent;
     }
+    /* Reset animation whenever switching to a tile so it always starts fresh */
+    resetAnimation(tileType);
   }
 
   tiles.forEach(function (tile) {
