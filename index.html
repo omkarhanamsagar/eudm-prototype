@@ -1254,42 +1254,56 @@ html, body {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left;
 }
 
-/* ─── Network Overview demo — static scene ─── */
+/* ─── Network Overview demo (Figma 176:254) ─── */
 .sh-net-demo {
-  position: absolute; inset: 0; overflow: hidden; background: #fff;
+  position: absolute; inset: 0; overflow: hidden; background: #f4f5f7;
 }
 .sh-net-scene {
-  position: absolute; width: 1058px; height: 791px;
+  position: absolute; width: 2633px; height: 1666px;
   top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.82);
+  transform: translate(-50%, -50%) scale(0.357);
   transform-origin: center center;
+  overflow: hidden;
 }
+/* 176:255 — full-page background screenshot */
 .sh-net-bg {
-  position: absolute; inset: 0; overflow: hidden;
+  position: absolute; left: 0; top: 0; width: 2633px; height: 1666px;
+  overflow: hidden;
 }
 .sh-net-bg img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: fill;
-}
-.sh-net-spotlight {
   position: absolute;
-  left: 200px; top: 204px;
-  width: 858px; height: 587px;
+  height: 104.56%; left: -42.8%; top: -4.56%; width: 142.8%;
+  max-width: none;
+}
+/* 176:258 — white card background rect */
+.sh-net-card-bg {
+  position: absolute; left: 440px; top: 395px;
+  width: 2193px; height: 1499px;
+  background: #f9fafb;
+}
+/* 176:257 — network overview screenshot */
+.sh-net-card {
+  position: absolute; left: 440px; top: 427px;
+  width: 2162px; height: 1155px;
   border-radius: 8px;
-  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-}
-.sh-net-video {
-  position: absolute;
-  left: 200px; top: 204px;
-  width: 858px; height: 587px;
   overflow: hidden;
+}
+.sh-net-card img {
+  position: absolute;
+  height: 100.67%; left: -0.09%; top: -0.17%; width: 100.36%;
+  max-width: none;
+}
+/* 176:256 — video slot (network traffic chart) */
+.sh-net-video {
+  position: absolute; left: 441px; top: 851px;
+  width: 2160px; height: 1007px;
+  overflow: hidden;
+  border-radius: 3px 3px 0 0;
 }
 .sh-net-video video {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: fill;
+  object-fit: cover;
 }
 
 /* ── Real-time device metrics demo ─────────────────────────────────────── */
@@ -1860,16 +1874,18 @@ html, body {
                   <source src="assets/bits3.mov" type="video/mp4" />
                 </video>
               </div>
-              <!-- Network Overview demo — shown when network tile is active -->
+              <!-- Network Overview demo (Figma 176:254) — shown when network tile is active -->
               <div id="sh-net-demo" class="sh-net-demo" aria-hidden="true" style="display:none">
                 <div class="sh-net-scene">
-                  <div class="sh-net-bg"><img src="assets/net-bg.png" alt="" /></div>
+                  <div class="sh-net-bg"><img src="assets/net2-bg.png" alt="" /></div>
+                  <div class="sh-net-card-bg"></div>
+                  <div class="sh-net-card"><img src="assets/net2-card.png" alt="" /></div>
                   <div class="sh-net-video">
                     <video autoplay loop muted playsinline>
+                      <source src="assets/net-video.mp4.mov" type="video/quicktime" />
                       <source src="assets/net-video.mp4.mov" type="video/mp4" />
                     </video>
                   </div>
-                  <div class="sh-net-spotlight"></div>
                 </div>
               </div>
               <!-- Fleet Automation demo — shown when fleet tile is active -->
