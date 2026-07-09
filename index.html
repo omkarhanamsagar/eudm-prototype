@@ -1002,14 +1002,12 @@ html, body {
   color: var(--ui-text-tertiary);
 }
 
-/* ── AI Demo — 117:41 background animation ─────────────────────────── */
+/* ── AI Demo — video ────────────────────────────────────────────────── */
 .sh-ai-demo { position: absolute; inset: 0; overflow: hidden; background: #13151a; }
-.sh-ai-scene {
-  position: absolute; width: 961px; height: 792px;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.82);
-  transform-origin: center center;
-  overflow: hidden;
+.sh-ai-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
 }
 
 /* 117:41 — background element, zoom + pan on 8s loop */
@@ -1849,36 +1847,9 @@ html, body {
               </div>
               <!-- AI insights animation — shown only when AI tile is active -->
               <div id="sh-ai-demo" class="sh-ai-demo" aria-hidden="true" style="display:none">
-                <div class="sh-ai-scene">
-                  <!-- 117:41 background image + dim overlay -->
-                  <div class="ai2-bg">
-                    <div class="ai2-bg-inner"><img src="assets/ai2-bg.png" alt="" /></div>
-                    <div class="ai2-bg-dim"></div>
-                  </div>
-                  <!-- 117:69 dark rect (bottom-right, same zoom as bg) -->
-                  <div class="ai2-dark-rect">
-                    <div class="ai2-dark-rect-dim"></div>
-                  </div>
-                  <!-- 117:48 chat panel mask group + 117:37 inner panel image -->
-                  <div class="ai2-panel-wrap">
-                    <img class="ai2-panel-img" src="assets/ai2-panel.png" alt="" />
-                  </div>
-                  <!-- 117:39 alt full panel (fades in, then zooms) -->
-                  <div class="ai2-panel-alt">
-                    <img src="assets/ai2-panel-alt.png" alt="" />
-                  </div>
-                  <!-- 117:209 small input pill (zoom, text ticker, exit) -->
-                  <div class="ai2-pill">
-                    <div class="ai2-pill-t1"><img src="assets/ai2-pill1.png" alt="" /></div>
-                    <div class="ai2-pill-t2"><img src="assets/ai2-pill2.png" alt="" /></div>
-                  </div>
-                  <!-- 117:45 REPLACE container (zoom, text ticker, exit) -->
-                  <div class="ai2-replace">
-                    <div class="ai2-replace-bg"></div>
-                    <div class="ai2-replace-out"><img src="assets/ai2-replace-out.png" alt="" /></div>
-                    <div class="ai2-replace-in"><img src="assets/ai2-replace-in.png" alt="" /></div>
-                  </div>
-                </div>
+                <video class="sh-ai-video" autoplay loop muted playsinline>
+                  <source src="assets/bits3.mov" type="video/mp4" />
+                </video>
               </div>
               <!-- Network Overview demo — shown when network tile is active -->
               <div id="sh-net-demo" class="sh-net-demo" aria-hidden="true" style="display:none">
