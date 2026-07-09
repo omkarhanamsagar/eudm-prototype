@@ -831,7 +831,7 @@ html, body {
   --sh-accent:        #5f59c8;
 
   width: 100%;
-  max-width: 1460px;
+  max-width: 1320px;
   padding: 0 var(--spacing-md); /* 0 16px */
   margin-top: var(--spacing-xxl); /* 48px below the learn-more affordance */
 }
@@ -986,7 +986,7 @@ html, body {
   position: relative;
   flex: 1;
   min-width: 0;
-  max-width: 1100px;
+  max-width: 1000px;
   height: 650px;           /* default contentHeight */
   border-radius: var(--border-radius); /* 4px */
   box-shadow: 0 0 1px rgba(36, 41, 49, 0.1), 0 3px 11px var(--ui-shadow-strength); /* @shadow-4 */
@@ -1252,6 +1252,14 @@ html, body {
 }
 .sh-fleet-demo img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left;
+}
+
+/* Widen the secondary-hero row only when the network tile is active */
+.secondary-hero--net-active {
+  max-width: 1460px;
+}
+.secondary-hero--net-active .secondary-hero__content {
+  max-width: 1100px;
 }
 
 /* ─── Network Overview demo (Figma 176:254) ─── */
@@ -2146,6 +2154,7 @@ html, body {
    * clicking the already-open tile is a no-op (stays open). */
   var tiles = Array.prototype.slice.call(document.querySelectorAll('.sh-tile'));
   var assetLabel = document.getElementById('sh-asset-label');
+  var secondaryHero = document.querySelector('.secondary-hero');
 
   var metricsDemo = document.getElementById('sh-metrics-demo');
   var aiDemo      = document.getElementById('sh-ai-demo');
@@ -2187,6 +2196,7 @@ html, body {
     if (aiDemo)      aiDemo.style.display      = isAi      ? 'block' : 'none';
     if (netDemo)     netDemo.style.display     = isNet     ? 'block' : 'none';
     if (fleetDemo)   fleetDemo.style.display   = isFleet   ? 'block' : 'none';
+    if (secondaryHero) secondaryHero.classList.toggle('secondary-hero--net-active', isNet);
     if (assetLabel) {
       assetLabel.style.display = hasDemo ? 'none' : '';
       if (!hasDemo) assetLabel.textContent = 'Screenshot TBD — ' + tile.querySelector('.sh-tile__title').textContent;
