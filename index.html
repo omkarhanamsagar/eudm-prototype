@@ -98,7 +98,7 @@
 
   /* ── PrimaryHero asset panel ─────────────────────────────────────── */
   --hero-asset-max-w:           836px;    /* source: primary-hero.less __asset */
-  --hero-asset-height:          360px;    /* default assetHeight prop          */
+  --hero-asset-height:          720px;    /* assetHeight prop default = 720 */
   --hero-desc-w:                380px;    /* source: primary-hero.less __description */
 
   /* ── Layout sizing ────────────────────────────────────────────────── */
@@ -722,8 +722,8 @@ html, body {
   align-self: flex-end;
   width: 100%;
   max-width: var(--hero-asset-max-w); /* 836px */
-  height: calc(768px - 72px); /* gap of 72px reveals the gradient above it */
-  border-radius: var(--border-radius-lg) 0 0 0;
+  height: 720px; /* assetHeight=720, card height 768px → 48px top gap (marginTop xxl) */
+  border-radius: var(--border-radius) 0 var(--border-radius) 0; /* @border-radius 0 @border-radius 0 */
   background: #ffffff;
   /* Now that the card base is light too, a hairline border keeps the
    * asset panel from disappearing into the surrounding surface. */
