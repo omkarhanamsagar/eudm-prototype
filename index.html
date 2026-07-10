@@ -1255,9 +1255,10 @@ html, body {
 }
 
 /* When network tile is active: let the content pane overflow its box to the right */
-.secondary-hero--net-active .secondary-hero__content {
+.secondary-hero--net-active .secondary-hero__content,
+.secondary-hero--fleet-active .secondary-hero__content {
   overflow: visible;
-  box-shadow: none;   /* shadow moves to sh-net-demo so it covers the full width */
+  box-shadow: none;
   border-radius: 0;
 }
 
@@ -2196,6 +2197,7 @@ html, body {
     if (netDemo)     netDemo.style.display     = isNet     ? 'block' : 'none';
     if (fleetDemo)   fleetDemo.style.display   = isFleet   ? 'block' : 'none';
     if (secondaryHero) secondaryHero.classList.toggle('secondary-hero--net-active', isNet);
+    if (secondaryHero) secondaryHero.classList.toggle('secondary-hero--fleet-active', isFleet);
 
     /* Extend network demo rightward to fill scene width without moving the tiles */
     if (isNet && netDemo) {
@@ -2209,6 +2211,20 @@ html, body {
       netDemo.style.right = '';
       netDemo.style.borderRadius = '';
       netDemo.style.boxShadow = '';
+    }
+
+    /* Extend fleet demo rightward so the full image width is visible */
+    if (isFleet && fleetDemo) {
+      var contentPane = document.querySelector('.secondary-hero__content');
+      var fleetDisplayW = Math.ceil(contentPane.offsetHeight * (10490 / 6330));
+      var overflow = Math.max(0, fleetDisplayW - contentPane.offsetWidth);
+      fleetDemo.style.right = '-' + overflow + 'px';
+      fleetDemo.style.borderRadius = 'var(--border-radius, 4px)';
+      fleetDemo.style.boxShadow = '0 0 1px rgba(36,41,49,0.1), 0 3px 11px var(--ui-shadow-strength)';
+    } else if (fleetDemo) {
+      fleetDemo.style.right = '';
+      fleetDemo.style.borderRadius = '';
+      fleetDemo.style.boxShadow = '';
     }
     if (assetLabel) {
       assetLabel.style.display = hasDemo ? 'none' : '';
