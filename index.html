@@ -1782,13 +1782,6 @@ html, body {
     var isFleet     = tileType === 'fleet';
     var hasDemo     = isMetrics || isAi || isNet || isFleet;
     if (metricsDemo) metricsDemo.style.display = isMetrics ? 'block' : 'none';
-    /* Scale metrics scene to exactly fill the content pane width */
-    if (isMetrics && metricsDemo) {
-      var contentPane = document.querySelector('.secondary-hero__content');
-      var metricsScale = contentPane ? contentPane.offsetWidth / 1058 : 1;
-      var metricsScene = metricsDemo.querySelector('.sh-metrics-scene');
-      if (metricsScene) metricsScene.style.transform = 'translate(-50%, -50%) scale(' + metricsScale + ')';
-    }
     if (aiDemo)      aiDemo.style.display      = isAi      ? 'block' : 'none';
     if (netDemo)     netDemo.style.display     = isNet     ? 'block' : 'none';
     if (fleetDemo)   fleetDemo.style.display   = isFleet   ? 'block' : 'none';
