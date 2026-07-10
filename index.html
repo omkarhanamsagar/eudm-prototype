@@ -1253,11 +1253,6 @@ html, body {
 .sh-fleet-demo img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left;
 }
-.sh-fleet-spotlight {
-  position: absolute; left: 0; top: 210px; width: 100%; height: 72px;
-  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.2);
-  pointer-events: none; z-index: 10;
-}
 
 /* When network tile is active: let the content pane overflow its box to the right */
 .secondary-hero--net-active .secondary-hero__content {
@@ -1912,7 +1907,6 @@ html, body {
               <!-- Fleet Automation demo — shown when fleet tile is active -->
               <div id="sh-fleet-demo" class="sh-fleet-demo" aria-hidden="true" style="display:none">
                 <img src="assets/fleet-install-agents.png" alt="Fleet Automation — Install Agents" />
-                <div class="sh-fleet-spotlight"></div>
               </div>
             </div>
 
